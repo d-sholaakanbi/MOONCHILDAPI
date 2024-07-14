@@ -1,13 +1,16 @@
-const Category = require("../../controller/PRODUCTS/categoriesController");
-const asyncWrapper = require("../../middleware/PRODUCTS/async");
+const Category = require('../../models/PRODUCTS/category');
+const asyncWrapper = require('../../middleware/PRODUCTS/async');
 
 // Create a Category
 const createCategory = asyncWrapper(async (req, res) => {
+    const { name, image } = req.body;
+
     let category = new Category({
-        male: req.body.male,
-        female: req.body.female,
-        bags: req.body.bags,
-        hats: req.body.hats
+        name,
+        image: {
+            public_id: image.public_id,
+            url: image.url
+        }
     });
 
     category = await category.save();

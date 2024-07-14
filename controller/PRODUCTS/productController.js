@@ -3,8 +3,19 @@ const asyncWrapper = require("../../middleware/PRODUCTS/async");
 
 // Get all products
 const getAllProducts = asyncWrapper(async (req, res) => {
-    const products = await Products.find();
-    res.status(200).json({ numOfproducts: products.length, products });
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 10; 
+
+    const skip = (page - 1) * limit;
+
+    const products = await Products.find()
+        .select('title price description category images categoryId countInStock')
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+    const numOfProducts = await Products.countDocuments();
+    res.status(200).json({ numOfProducts, products });
 });
 
 // Get a single product
@@ -19,14 +30,25 @@ const getProduct = asyncWrapper(async (req, res) => {
 
 // Create a product
 const createProduct = asyncWrapper(async (req, res) => {
-    const { name, description, gender, category, countInStock } = req.body;
+    const productData = req.body;
 
-    if (!name || !description || !gender || !category || !countInStock) {
-        return res.status(400).json({ msg: "Please provide necessary information" });
-    }
+    const product = new Products({
+        title: productData.title,
+        price: productData.price,
+        description: productData.description,
+        category: {
+            id: productData.category.id,
+            name: productData.category.name,
+            image: productData.category.image // Directly using the provided image URL
+        },
+        images: productData.images, // Directly using the provided image URLs array
+        categoryId: productData.categoryId,
+        countInStock: productData.countInStock // Ensure to add countInStock
+    });
 
-    const product = await Products.create(req.body);
-    res.status(201).json({ msg: "Product created", product });
+    // Save product to database
+    await product.save();
+    res.status(201).json({ success: true, data: product });
 });
 
 // Update a product
