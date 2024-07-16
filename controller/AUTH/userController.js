@@ -1,6 +1,7 @@
 const User = require('../../models/AUTH/users');
 const jwt = require('jsonwebtoken');
-const handleErrors = require('../../middleware/AUTH/handleErrors');
+const asyncWrapper = require('../../middleware/AUTH/async');
+
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -8,29 +9,28 @@ const generateToken = (id) => {
 };
 
 // Signup Controller
-const signup = async (req, res) => {
-    const { firstname, lastname, username, email, password } = req.body;
-
-    if (!firstname || !lastname || !username || !email || !password) {
-        return res.status(400).json({ success: false, message: "Please provide all necessary information" });
+const signup = asyncWrapper(async (req, res) => {
+    const { firstName, lastName, userName, gender, email, password } = req.body;
+  
+    if (!firstName || !lastName || !userName || !gender || !email || !password) {
+      return res.status(400).json({ msg: 'Please provide all required fields' });
     }
+  
+    const newUser = new User({
+      firstName,
+      lastName,
+      userName,
+      gender,
+      email,
+      password
+    });
+  
+    await newUser.save();
+  
+    res.status(201).json({ success: true, user: newUser });
+  });
+  
 
-    try {
-        const userExist = await User.findOne({ email });
-
-        if (userExist) {
-            return res.status(400).json({ success: false, message: "Email has been used" });
-        }
-
-        const user = await User.create({ firstname, lastname, username, email, password });
-        res.status(201).json({ success: true, data: user });
-    } catch (error) {
-        const errors = handleErrors(error);
-        res.status(400).json({ success: false, errors });
-    }
-};
-
-// Login Controller
 // Login Controller
 const login = async (req, res) => {
     const { email, password } = req.body;
