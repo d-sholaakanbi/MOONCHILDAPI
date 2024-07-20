@@ -6,15 +6,14 @@ const {
     updateCategory,
     deleteCategory
 } = require("../../controller/PRODUCTS/categoriesController");
-const { validateCategory } = require('../../middleware/PRODUCTS/categoryValidator');
 
 router.route("/")
-    .post(validateCategory, createCategory)
+    .post(createCategory)
     .get(getAllCategories);
 
 router.route("/:categoryId")
     .get(getCategory)
-    .patch(validateCategory, updateCategory)
+    .patch(updateCategory)
     .delete(deleteCategory);
 
 module.exports = router;

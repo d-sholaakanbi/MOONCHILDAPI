@@ -1,79 +1,99 @@
-const Products = require("../../models/PRODUCTS/products");
+const Product = require("../../models/PRODUCTS/products");
 const asyncWrapper = require("../../middleware/PRODUCTS/async");
 
 // Get all products
 const getAllProducts = asyncWrapper(async (req, res) => {
-    const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || 10; 
-
+    const page = parseInt(req.query.page, 10) || 1; 
+    const limit = parseInt(req.query.limit, 10) || 10; 
     const skip = (page - 1) * limit;
 
-    const products = await Products.find()
+    const products = await Product.find()
         .select('title price description category images categoryId countInStock')
         .skip(skip)
         .limit(limit)
         .exec();
 
-    const numOfProducts = await Products.countDocuments();
+    const numOfProducts = await Product.countDocuments();
     res.status(200).json({ numOfProducts, products });
 });
 
 // Get a single product
 const getProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const product = await Products.findOne({ _id: productId });
+    const product = await Product.findById(productId);
     if (!product) {
         return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
     }
     res.status(200).json({ product });
 });
 
-// Create a product
+// Create a Product
 const createProduct = asyncWrapper(async (req, res) => {
-    const productData = req.body;
+    const {
+        id, title, price, description, countInStock, category, images, categoryId
+    } = req.body;
 
-    const product = new Products({
-        title: productData.title,
-        price: productData.price,
-        description: productData.description,
+    // Validate the presence of required fields
+    if (!id || !title || !price || !description || !countInStock || !category || !images || !categoryId) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Create a new product instance
+    const product = new Product({
+        id,
+        title,
+        price,
+        description,
+        countInStock,
         category: {
-            id: productData.category.id,
-            name: productData.category.name,
-            image: productData.category.image // Directly using the provided image URL
+            id: category.id,
+            name: category.name,
+            image: category.image // Directly using the provided image URL
         },
-        images: productData.images, // Directly using the provided image URLs array
-        categoryId: productData.categoryId,
-        countInStock: productData.countInStock // Ensure to add countInStock
+        images, // Directly using the provided image URLs array
+        categoryId
     });
 
-    // Save product to database
-    await product.save();
-    res.status(201).json({ success: true, data: product });
+    // Save the product to the database
+    try {
+        await product.save();
+        res.status(201).json({ success: true, data: product });
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating product', details: error.message });
+    }
 });
 
-// Update a product
+// Update a Product
 const updateProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const product = await Products.findOneAndUpdate(
-        { _id: productId },
+    const updatedProduct = await Product.findByIdAndUpdate(
+        productId,
         req.body,
-        { new: true, runValidators: true }
+        { new: true, runValidators: true } // Return the updated document and run validators
     );
-    res.status(200).json({ msg: "Product updated successfully", product });
+
+    if (!updatedProduct) {
+        return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.status(200).json({ success: true, msg: "Product updated successfully", product: updatedProduct });
 });
 
 // Delete a product
 const deleteProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const product = await Products.findOneAndDelete({ _id: productId });
+    const product = await Product.findByIdAndDelete(productId);
+    if (!product) {
+        return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
+    }
     res.status(200).json({ msg: "Product deleted", product });
 });
 
 // Exports
 module.exports = {
     getAllProducts,
-    updateProduct,
-    deleteProduct,
     getProduct,
     createProduct,
+    updateProduct,
+    deleteProduct
 };
