@@ -4,7 +4,7 @@ const asyncWrapper = require("../../middleware/PRODUCTS/async");
 // Get all products
 const getAllProducts = asyncWrapper(async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1; 
-    const limit = parseInt(req.query.limit, 10) || 10; 
+    const limit = parseInt(req.query.limit, 10) || 20; 
     const skip = (page - 1) * limit;
 
     const products = await Product.find()
