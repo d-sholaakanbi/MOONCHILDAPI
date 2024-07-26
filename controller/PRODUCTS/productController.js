@@ -1,10 +1,10 @@
 const Product = require("../../models/PRODUCTS/products");
 const asyncWrapper = require("../../middleware/PRODUCTS/async");
 
-// Get all products
+// Get all products with pagination
 const getAllProducts = asyncWrapper(async (req, res) => {
-    const page = parseInt(req.query.page, 10) || 1; 
-    const limit = parseInt(req.query.limit, 10) || 20; 
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
     const skip = (page - 1) * limit;
 
     const products = await Product.find()
@@ -17,17 +17,23 @@ const getAllProducts = asyncWrapper(async (req, res) => {
     res.status(200).json({ numOfProducts, products });
 });
 
-// Get a single product
+// Get a single product by custom ID
 const getProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const product = await Product.findById(productId);
-    if (!product) {
-        return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
+
+    try {
+        const product = await Product.findOne({ id: productId });
+
+        if (!product) {
+            return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
+        }
+        res.status(200).json({ product });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    res.status(200).json({ product });
 });
 
-// Create a Product
+// Create a new product
 const createProduct = asyncWrapper(async (req, res) => {
     const {
         id, title, price, description, countInStock, category, images, categoryId
@@ -63,36 +69,42 @@ const createProduct = asyncWrapper(async (req, res) => {
     }
 });
 
-// Update a Product
+// Update a product by custom ID
 const updateProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        req.body,
-        { new: true, runValidators: true } // Return the updated document and run validators
-    );
 
-    if (!updatedProduct) {
-        return res.status(404).json({ error: 'Product not found' });
+    try {
+        const updatedProduct = await Product.findOneAndUpdate(
+            { id: productId },
+            req.body,
+            { new: true, runValidators: true } // Returns the updated document and runs validation
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
+        }
+        res.status(200).json({ msg: "Product updated successfully", updatedProduct });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    res.status(200).json({ success: true, msg: "Product updated successfully", product: updatedProduct });
 });
 
-// Get products by category
+// Get products by category ID
 const getProductsByCategory = asyncWrapper(async (req, res) => {
     const { categoryId } = req.params;
-    const products = await Product.find({ categoryid: categoryId });
+    const products = await Product.find({ categoryId: categoryId }); // Fix field name to match schema
+
     if (!products.length) {
         return res.status(404).json({ message: 'No products found for this category' });
     }
     res.status(200).json(products);
 });
 
-// Delete a product
+// Delete a product by custom ID
 const deleteProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
-    const product = await Product.findByIdAndDelete(productId);
+    const product = await Product.findOneAndDelete({ id: productId }); // Use custom ID for deletion
+
     if (!product) {
         return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
     }
