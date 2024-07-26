@@ -81,8 +81,8 @@ const updateProduct = asyncWrapper(async (req, res) => {
 
 // Get products by category
 const getProductsByCategory = asyncWrapper(async (req, res) => {
-    const { categoryid } = req.params;
-    const products = await Product.find({ categoryId: categoryid });
+    const { categoryId } = req.params;
+    const products = await Product.find({ categoryid: categoryId });
     if (!products.length) {
         return res.status(404).json({ message: 'No products found for this category' });
     }

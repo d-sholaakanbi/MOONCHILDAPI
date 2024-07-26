@@ -20,7 +20,7 @@ router.route('/:productId')
     .delete(deleteProduct); // Delete a product by ID
 
 // Route to get products by category ID
-router.route('/category/:categoryid')
+router.route('/categories/:categoryId')
     .get(getProductsByCategory);
 
 module.exports = router;

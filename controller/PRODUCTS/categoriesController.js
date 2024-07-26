@@ -1,4 +1,5 @@
 const Category = require('../../models/PRODUCTS/category');
+const Product = require('../../models/PRODUCTS/products'); 
 const asyncWrapper = require('../../middleware/PRODUCTS/async');
 
 // Create a Category
@@ -62,6 +63,19 @@ const updateCategory = asyncWrapper(async (req, res) => {
     res.status(200).json({ msg: "Category updated successfully", category });
 });
 
+// Get products for a specific category
+const getCategoryProducts = asyncWrapper(async (req, res) => {
+    const { categoryId } = req.params;
+    
+    const products = await Product.find({ Category: categoryId });
+    
+    if (!products.length) {  // Check if the products array is empty
+        return res.status(404).json({ msg: `No products found for category with id: ${categoryId}` });
+    }
+    
+    res.status(200).json({ products });
+});
+
 // Delete a category
 const deleteCategory = asyncWrapper(async (req, res) => {
     const { categoryId } = req.params;
@@ -77,5 +91,6 @@ module.exports = {
     getAllCategories,
     getCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategoryProducts
 };
