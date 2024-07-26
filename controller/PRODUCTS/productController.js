@@ -79,6 +79,16 @@ const updateProduct = asyncWrapper(async (req, res) => {
     res.status(200).json({ success: true, msg: "Product updated successfully", product: updatedProduct });
 });
 
+// Get products by category
+const getProductsByCategory = asyncWrapper(async (req, res) => {
+    const { categoryid } = req.params;
+    const products = await Product.find({ categoryId: categoryid });
+    if (!products.length) {
+        return res.status(404).json({ message: 'No products found for this category' });
+    }
+    res.status(200).json(products);
+});
+
 // Delete a product
 const deleteProduct = asyncWrapper(async (req, res) => {
     const { productId } = req.params;
@@ -95,5 +105,6 @@ module.exports = {
     getProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductsByCategory
 };
