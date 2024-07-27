@@ -15,6 +15,6 @@ router.get('/', getAllCategories);
 router.get('/:categoryId', getCategory);
 router.patch('/:categoryId', updateCategory);
 router.delete('/:categoryId', deleteCategory);
-router.get('/categories/:categoryid/products', getCategoryProducts); 
+router.get('/:categoryId/products', getCategoryProducts); 
 
 module.exports = router;
