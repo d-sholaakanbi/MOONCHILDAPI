@@ -6,7 +6,7 @@ const {
     getCategory,
     updateCategory,
     deleteCategory,
-    getCategoryProducts
+    getProductsByCategoryId
 } = require('../../controller/PRODUCTS/categoriesController');
 
 // Define your routes
@@ -15,6 +15,6 @@ router.get('/', getAllCategories);
 router.get('/:categoryId', getCategory);
 router.patch('/:categoryId', updateCategory);
 router.delete('/:categoryId', deleteCategory);
-router.get('/:categoryId/products', getCategoryProducts); 
+router.get('/:id/products', getProductsByCategoryId); 
 
 module.exports = router;

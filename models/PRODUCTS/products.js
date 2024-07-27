@@ -4,7 +4,7 @@ const productSchema = new mongoose.Schema({
     id: {
         type: Number,
         required: true,
-        unique: true  // Ensures that each product ID is unique
+        unique: true  
     },
     title: {
         type: String,
@@ -43,9 +43,9 @@ const productSchema = new mongoose.Schema({
     }],
     categoryId: {
         type: Number,
-        required: true
-    },
-  
+        ref: 'Category',
+        required: true,
+    }
 },{ timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

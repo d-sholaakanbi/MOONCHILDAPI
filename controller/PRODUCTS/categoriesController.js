@@ -1,6 +1,7 @@
 const Category = require('../../models/PRODUCTS/category');
 const Product = require('../../models/PRODUCTS/products'); 
 const asyncWrapper = require('../../middleware/PRODUCTS/async');
+const mongoose = require('mongoose');
 
 // Create a Category
 const createCategory = asyncWrapper(async (req, res) => {
@@ -42,7 +43,7 @@ const getAllCategories = asyncWrapper(async (req, res) => {
 // Get a single category
 const getCategory = asyncWrapper(async (req, res) => {
     const { categoryId } = req.params;
-    const category = await Category.findOne({ _id: categoryId });
+    const category = await Category.findOne({id: categoryId });
     if (!category) {
         return res.status(404).json({ msg: `Category with the id: ${categoryId} not found` });
     }
@@ -64,23 +65,16 @@ const updateCategory = asyncWrapper(async (req, res) => {
 });
 
 // Get products for a specific category
-const getCategoryProducts = async (req, res) => {
+const getProductsByCategoryId = async (req, res) => {
     try {
-      const { categoryId } = req.params;
-      console.log("Received categoryId:", categoryId);
-  
-      // Find products by numeric category ID
-      const products = await Product.find({ category: Number(categoryId) });
-  
-      console.log("Filtered products:", products);
-      res.status(200).json({ products });
+        const categoryId = parseInt(req.params.id);
+        const products = await Product.find({ categoryId: categoryId });
+        res.json({ products });
     } catch (error) {
-      console.error('Error fetching category products:', error);
-      res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
-  };
+};
   
-
 
 // Delete a category
 const deleteCategory = asyncWrapper(async (req, res) => {
@@ -98,5 +92,5 @@ module.exports = {
     getCategory,
     updateCategory,
     deleteCategory,
-    getCategoryProducts
+    getProductsByCategoryId
 };
