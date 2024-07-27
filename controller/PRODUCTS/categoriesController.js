@@ -65,20 +65,25 @@ const updateCategory = asyncWrapper(async (req, res) => {
 
 // Get products for a specific category
 const getCategoryProducts = async (req, res) => {
-  try {
-    const { categoryId } = req.params;
-    console.log("Received categoryId:", categoryId);
-    
-    // Assuming your Product model has a field called 'category' that stores the category ID
-    const products = await Product.find({ category: categoryId });
-    
-    console.log("Filtered products:", products);
-    res.status(200).json({ products });
-  } catch (error) {
-    console.error('Error fetching category products:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
+    try {
+      const { categoryId } = req.params;
+      console.log("Received categoryId:", categoryId);
+      
+      // Convert categoryId to ObjectId if needed
+      const categoryObjectId = mongoose.Types.ObjectId(categoryId);
+      
+      console.log("Converted categoryId to ObjectId:", categoryObjectId);
+      
+      // Find products by category ID
+      const products = await Product.find({ category: categoryObjectId });
+      
+      console.log("Filtered products:", products);
+      res.status(200).json({ products });
+    } catch (error) {
+      console.error('Error fetching category products:', error);
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 
 
