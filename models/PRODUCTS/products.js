@@ -24,27 +24,15 @@ const productSchema = new mongoose.Schema({
         min: 0,
         max: 255
       },
-    category: {
-        id: {
-            type: Number,
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        image: {
-            type: String,  // URL of the image
-            required: true
-        }
-    },
     images: [{
         type: String  // Array of image URLs
     }],
-    categoryId: {
-        type: Number,
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
         required: true
     }
+
 },{ timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

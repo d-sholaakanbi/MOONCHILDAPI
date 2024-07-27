@@ -64,17 +64,23 @@ const updateCategory = asyncWrapper(async (req, res) => {
 });
 
 // Get products for a specific category
-const getCategoryProducts = asyncWrapper(async (req, res) => {
+const getCategoryProducts = async (req, res) => {
+  try {
     const { categoryId } = req.params;
+    console.log("Received categoryId:", categoryId);
     
-    const products = await Product.find({ Category: categoryId });
+    // Assuming your Product model has a field called 'category' that stores the category ID
+    const products = await Product.find({ category: categoryId });
     
-    if (!products.length) {  // Check if the products array is empty
-        return res.status(404).json({ msg: `No products found for category with id: ${categoryId}` });
-    }
-    
+    console.log("Filtered products:", products);
     res.status(200).json({ products });
-});
+  } catch (error) {
+    console.error('Error fetching category products:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 
 // Delete a category
 const deleteCategory = asyncWrapper(async (req, res) => {
