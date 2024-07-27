@@ -68,15 +68,10 @@ const getCategoryProducts = async (req, res) => {
     try {
       const { categoryId } = req.params;
       console.log("Received categoryId:", categoryId);
-      
-      // Convert categoryId to ObjectId if needed
-      const categoryObjectId = mongoose.Types.ObjectId(categoryId);
-      
-      console.log("Converted categoryId to ObjectId:", categoryObjectId);
-      
-      // Find products by category ID
-      const products = await Product.find({ category: categoryObjectId });
-      
+  
+      // Find products by numeric category ID
+      const products = await Product.find({ category: Number(categoryId) });
+  
       console.log("Filtered products:", products);
       res.status(200).json({ products });
     } catch (error) {
@@ -84,7 +79,7 @@ const getCategoryProducts = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
-
+  
 
 
 // Delete a category
