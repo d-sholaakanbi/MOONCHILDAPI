@@ -9,7 +9,7 @@ const {
 } = require('../../controller/PRODUCTS/productController');
 
 // Route to get all products or filter by category
-router.route('/')
+router.route('/products')
     .get(getAllProducts)  // Use query parameters for pagination and sorting
     .post(createProduct); // Create a new product
 
