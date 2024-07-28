@@ -37,7 +37,7 @@ const userRouter = require("./routes/AUTH/user")
 
 // Use routes
 app.use('/api/categories', categoryRouter);
-app.use('/api/products', productsRouter);
+app.use('/api', productsRouter);
 app.use('/api', userRouter);
 
 

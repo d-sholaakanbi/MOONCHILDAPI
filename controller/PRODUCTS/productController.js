@@ -19,15 +19,15 @@ const getAllProducts = asyncWrapper(async (req, res) => {
 
 // Get a single product by custom ID
 const getProduct = asyncWrapper(async (req, res) => {
-    const { productId } = req.params;
+    const { productid } = req.params;
 
     try {
-        const product = await Product.findOne({ id: productId });
+        const product = await Product.findOne({ id: productid });
 
         if (!product) {
-            return res.status(404).json({ msg: `Product with the id: ${productId} not found` });
+            return res.status(404).json({ msg: `Product with the id: ${productid} not found` });
         }
-        res.status(200).json({ product });
+        res.status(200).json(product);  // Return the actual product object
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

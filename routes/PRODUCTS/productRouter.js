@@ -14,7 +14,7 @@ router.route('/')
     .post(createProduct); // Create a new product
 
 // Route to get a product by ID, update, or delete a product
-router.route('/:productId')
+router.route('/product/:productid')
     .get(getProduct)    // Get a single product by ID
     .patch(updateProduct) // Update a product by ID
     .delete(deleteProduct); // Delete a product by ID
