@@ -10,7 +10,6 @@ const getAllProducts = asyncWrapper(async (req, res) => {
     const skip = (page - 1) * limit;
 
     const products = await Product.find()
-        .select('title price description category images categoryId countInStock')
         .skip(skip)
         .limit(limit)
         .exec();
