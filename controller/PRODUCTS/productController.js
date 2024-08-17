@@ -19,7 +19,7 @@ const getAllProducts = asyncWrapper(async (req, res) => {
 
 // Get a single product by custom ID
 const getProduct = asyncWrapper(async (req, res) => {
-    const { productid } = req.params;
+    const { id: productid  } = req.params;
 
     try {
         const product = await Product.findOne({ id: productid });
