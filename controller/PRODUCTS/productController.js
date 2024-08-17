@@ -1,5 +1,7 @@
 const Product = require("../../models/PRODUCTS/products");
 const asyncWrapper = require("../../middleware/PRODUCTS/async");
+const {v4: uuidv4} = require ("uuid")
+const category = require ("../../models/PRODUCTS/category")
 
 // Get all products with pagination
 const getAllProducts = asyncWrapper(async (req, res) => {
@@ -35,29 +37,31 @@ const getProduct = asyncWrapper(async (req, res) => {
 
 // Create a new product
 const createProduct = asyncWrapper(async (req, res) => {
-    const {
-        id, title, price, description, countInStock, category, images, categoryId
+    const {title, price, description, countInStock, images, categoryId
     } = req.body;
 
     // Validate the presence of required fields
-    if (!id || !title || !price || !description || !countInStock || !category || !images || !categoryId) {
+    if (!title || !price || !description || !countInStock || !images || !categoryId) {
         return res.status(400).json({ error: 'All fields are required' });
     }
+    const findCategory = await category.findOne({
+        id : categoryId
+    })
+
+    if (!findCategory){
+        return res.status(400).json({ error: 'Category not found' });
+    }
+
 
     // Create a new product instance
     const product = new Product({
-        id,
+        id: uuidv4(),
         title,
         price,
         description,
         countInStock,
-        category: {
-            id: category.id,
-            name: category.name,
-            image: category.image // Directly using the provided image URL
-        },
+        categoryId:findCategory.id,
         images, // Directly using the provided image URLs array
-        categoryId
     });
 
     // Save the product to the database

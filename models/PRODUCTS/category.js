@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
     id: {
-        type: Number,
+        type: String,
         required: true
       },
       name: {
@@ -10,8 +10,7 @@ const categorySchema = new mongoose.Schema({
         required: true
       },
       image: {
-        public_id: String,
-        url: String,
+        type: String,
       }
 }, { timestamps: true });
 

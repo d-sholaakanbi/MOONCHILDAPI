@@ -2,22 +2,21 @@ const Category = require('../../models/PRODUCTS/category');
 const Product = require('../../models/PRODUCTS/products'); 
 const asyncWrapper = require('../../middleware/PRODUCTS/async');
 const mongoose = require('mongoose');
+const {v4: uuidv4} = require ("uuid")
+
 
 // Create a Category
 const createCategory = asyncWrapper(async (req, res) => {
-    const { id, name, image } = req.body;
+    const { name, image } = req.body;
 
-    if (!id) {
-        return res.status(400).json({ error: 'id is required' });
+    if (!name || !image) {
+        return res.status(400).json({ error: 'field is required' });
     }
 
     let category = new Category({
-        id,
+        id : uuidv4(),
         name,
-        image: {
-            public_id: image.public_id,
-            url: image.url
-        }
+        image
     });
 
     category = await category.save();

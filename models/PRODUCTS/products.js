@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
     id: {
-        type: Number,
+        type: String,
         required: true,
         unique: true  
     },
@@ -24,25 +24,9 @@ const productSchema = new mongoose.Schema({
         min: 0,
         max: 255
       },
-    category: {
-        id: {
-            type: Number,
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        image: {
-            type: String,  // URL of the image
-            required: true
-        }
-    },
-    images: [{
-        type: String  // Array of image URLs
-    }],
+    images: {type: [String]},
     categoryId: {
-        type: Number,
+        type: String,
         ref: 'Category',
         required: true,
     }
