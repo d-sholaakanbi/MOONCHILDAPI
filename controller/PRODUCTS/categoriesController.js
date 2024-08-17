@@ -66,7 +66,7 @@ const updateCategory = asyncWrapper(async (req, res) => {
 // Get products for a specific category
 const getProductsByCategoryId = async (req, res) => {
     try {
-        const categoryId = parseInt(req.params.id);
+        const categoryId = req.params.id;
         const products = await Product.find({ categoryId: categoryId });
         res.json({ products });
     } catch (error) {
