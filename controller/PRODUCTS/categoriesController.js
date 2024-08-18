@@ -53,7 +53,7 @@ const getCategory = asyncWrapper(async (req, res) => {
 const updateCategory = asyncWrapper(async (req, res) => {
     const { categoryId } = req.params;
     const category = await Category.findOneAndUpdate(
-        { _id: categoryId },
+        { id: categoryId },
         req.body,
         { new: true, runValidators: true }
     );
