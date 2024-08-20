@@ -34,6 +34,7 @@ const signup = asyncWrapper(async (req, res) => {
 // Login Controller
 const login = async (req, res) => {
     const { email, password } = req.body;
+ console.log(email);
 
     if (!email || !password) {
         return res.status(400).json({ success: false, message: "Please provide necessary information" });
