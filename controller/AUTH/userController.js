@@ -11,6 +11,8 @@ const generateToken = (id) => {
 // Signup Controller
 const signup = asyncWrapper(async (req, res) => {
     const { firstName, lastName, userName, gender, email, password } = req.body;
+    console.log(req.body);
+    
   
     if (!firstName || !lastName || !userName || !gender || !email || !password) {
       return res.status(400).json({ msg: 'Please provide all required fields' });
